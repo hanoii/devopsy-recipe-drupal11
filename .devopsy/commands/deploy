@@ -2,8 +2,10 @@
 ## Description: Build, start and update the site (run on the server by release)
 # Run on the server by `devopsy @<target> release deploy`, or locally.
 #
-# The first run generates the secrets into .env and installs the site from
-# config/sync; later runs apply updates and config with `drush deploy`.
+# The first run generates the secrets into .env. It never installs the site:
+# browse to it for Drupal's installer, or run `devopsy drush site:install`.
+# Once installed, later runs apply updates: `drush deploy` when config/sync
+# has exported configuration, otherwise database updates only.
 set -eu
 
 env_file="$DEVOPSY_PROJECT_DIR/.env"
@@ -25,9 +27,11 @@ secret DRUPAL_HASH_SALT
 devopsy build --pull
 devopsy up -d --wait --remove-orphans
 
-if devopsy exec -T app drush status --field=bootstrap 2>/dev/null | grep -q Successful; then
+if ! devopsy exec -T app drush status --field=bootstrap 2>/dev/null | grep -q Successful; then
+  echo "deploy: Drupal is not installed: browse to the site or run drush site:install" >&2
+elif ls "$DEVOPSY_PROJECT_DIR"/../config/sync/*.yml >/dev/null 2>&1; then
   devopsy exec -T app drush deploy --yes
 else
-  echo "deploy: no site yet, installing it from config/sync" >&2
-  devopsy exec -T app drush site:install --existing-config --yes
+  # Nothing to import yet: config:import refuses an empty directory.
+  devopsy exec -T app drush updatedb --yes
 fi

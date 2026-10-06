@@ -8,7 +8,8 @@ as a starting point for a Drupal site.
 ## Try it
 
 ```sh
-devopsy @prod release deploy   # build on the server, install or update the site
+devopsy @prod release deploy   # build on the server and start the site
+devopsy @prod drush site:install --yes   # or browse to the site for the installer
 devopsy @prod drush uli        # a one-time login link
 devopsy @prod shell            # bash in the app container, as the app user
 devopsy @prod --shell          # a shell on the server, in the current release
@@ -17,9 +18,12 @@ devopsy @prod releases
 ```
 
 The first `deploy` generates `DB_PASSWORD` and `DRUPAL_HASH_SALT` into the
-server's `shared/.env`, then installs the site from `config/sync`. Later
-deploys run `drush deploy`: database updates, config import, cache rebuild
-and deploy hooks.
+server's `shared/.env` and starts an empty site: it never installs Drupal.
+Browse to it for Drupal's installer, which skips the database step since
+settings come from the environment, or install with drush. Later deploys
+update an installed site: `drush deploy` (database updates, config import,
+cache rebuild and deploy hooks) once `config/sync` has exported
+configuration, only database updates until then.
 
 ## How it works
 
@@ -51,9 +55,9 @@ and deploy hooks.
 
 ## Changing configuration
 
-Configuration lives in `config/sync`, installed on the first deploy and
-imported on every later one. The code is read-only, so export from a site to
-`/tmp` and copy it out:
+Configuration lives in `config/sync`, empty until you export it, and is
+imported on every deploy once it has some. The code is read-only, so export
+from a site to `/tmp` and copy it out, then commit and release it:
 
 ```sh
 devopsy drush config:export --destination=/tmp/sync --yes
@@ -72,6 +76,7 @@ With a local devopsy-traefik, the site is at
 
 ```sh
 devopsy deploy
+devopsy drush site:install --yes
 devopsy drush uli
 ```
 

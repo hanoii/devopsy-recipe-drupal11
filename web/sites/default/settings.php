@@ -19,6 +19,8 @@ $databases['default']['default'] = [
 
 $settings['hash_salt'] = getenv('DRUPAL_HASH_SALT');
 
+// It must exist (config/sync/.gitkeep): the installer cannot create it in the
+// read-only image, and asks for database settings again without it.
 $settings['config_sync_directory'] = dirname(DRUPAL_ROOT) . '/config/sync';
 
 // Public files are a symlink to /app/storage/public (see the Dockerfile).
