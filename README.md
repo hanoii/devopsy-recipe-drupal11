@@ -7,6 +7,13 @@ as a starting point for a Drupal site.
 
 ## Try it
 
+Point the `prod` target at your server in `.devopsy/.env` (gitignored), or in
+the environment:
+
+```sh
+echo DEVOPSY_TARGET_HOST=devopsy@203.0.113.10 >> .devopsy/.env
+```
+
 ```sh
 devopsy @prod release deploy   # build on the server and start the site
 devopsy @prod drush site:install --yes   # or browse to the site for the installer
