@@ -1,0 +1,42 @@
+#!/bin/sh
+## Description: A bash shell in a container: the app, as the app user (-s service, -u user)
+# Usage: devopsy shell [-s service] [-u user] [bash args...]
+#   devopsy shell                     bash in app, as app (UID 10001)
+#   devopsy shell -u root             as root
+#   devopsy shell -s database         bash in the database container
+#   devopsy shell -c 'drush status'   run one command
+#   devopsy @prod shell               the same on a server
+#
+# compose exec skips the entrypoint, so without -u app the shell would be
+# root's.
+set -eu
+
+service=app
+user=
+# -s and -u first; anything after them goes to bash.
+while [ $# -gt 0 ]; do
+  case $1 in
+    -s|-u)
+      [ $# -ge 2 ] || { echo "shell: $1 needs an argument" >&2; exit 1; }
+      if [ "$1" = -s ]; then service=$2; else user=$2; fi
+      shift 2
+      ;;
+    --) shift; break ;;
+    *) break ;;
+  esac
+done
+
+if [ -z "$user" ] && [ "$service" = app ]; then
+  user=app
+fi
+
+set -- bash "$@"
+if [ -n "$user" ]; then
+  set -- -u "$user" "$service" "$@"
+else
+  set -- "$service" "$@"
+fi
+if ! [ -t 0 ]; then
+  set -- -T "$@"
+fi
+exec devopsy exec "$@"

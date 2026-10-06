@@ -1,0 +1,45 @@
+# Caddyfile for Drupal on FrankenPHP.
+# https://frankenphp.dev/docs/config
+# https://caddyserver.com/docs/caddyfile
+{
+	skip_install_trust
+	# TLS is terminated by devopsy-traefik.
+	auto_https off
+	admin off
+	persist_config off
+
+	servers {
+		# Traefik comes in over a Docker network: trust X-Forwarded-* for
+		# client_ip and logs.
+		trusted_proxies static private_ranges
+	}
+
+	frankenphp
+}
+
+:8080 {
+	root * /app/web
+	encode zstd br gzip
+
+	log {
+		output stdout
+		format console
+	}
+
+	# Same as Drupal's .htaccess rules: no hidden paths at any level, except .well-known.
+	@dotfiles {
+		path_regexp /\.
+		not path /.well-known/*
+	}
+	respond @dotfiles 403
+
+	# Code, config and backup files that must never be served.
+	@sensitive path_regexp \.(engine|inc|install|make|module|profile|po|sh|.*sql|theme|twig|tpl(\.php)?|xtmpl|yml)(~|\.sw[op]|\.bak|\.orig|\.save)?$|^/(Entries.*|Repository|Root|Tag|Template|composer\.(json|lock)|web\.config)$|^/#.*#$|\.php(~|\.sw[op]|\.bak|\.orig|\.save)$
+	respond @sensitive 403
+
+	# Never run PHP from sites/ (uploaded files, settings.php).
+	@sites_php path_regexp ^/sites/.*\.(php|phar|phtml)$
+	respond @sites_php 403
+
+	php_server
+}

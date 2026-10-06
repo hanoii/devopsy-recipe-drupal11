@@ -1,0 +1,10 @@
+#!/bin/sh
+## Description: Run drush in the app container
+set -eu
+
+tty=
+if ! [ -t 0 ]; then
+  tty=-T
+fi
+# shellcheck disable=SC2086
+exec devopsy exec $tty app drush "$@"

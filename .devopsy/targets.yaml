@@ -1,0 +1,6 @@
+# Environments of this project. Committed: no secrets here.
+# mode: build uploads the whole project and builds the image on the server.
+prod:
+  host: devopsy@203.0.113.10
+  path: /srv/drupal11-prod
+  mode: build

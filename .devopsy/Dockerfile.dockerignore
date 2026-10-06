@@ -1,0 +1,30 @@
+# The build context is the project root. BuildKit reads this file because it
+# sits next to the Dockerfile (Dockerfile.dockerignore).
+
+# VCS and local tooling
+.git
+.ddev
+.idea
+node_modules
+
+# devopsy's local and server-only files: secrets and data
+.devopsy/.env
+.devopsy/target.env
+.devopsy/mnt
+.devopsy/targets.local.yaml
+.devopsy/compose.override.y*ml
+
+# Installed by composer inside the image
+vendor
+web/core
+web/modules/contrib
+web/themes/contrib
+web/profiles/contrib
+web/libraries
+drush/Commands/contrib
+
+# Local files, settings and dumps
+web/sites/*/files
+web/sites/*/settings.local.php
+*.sql
+*.sql.gz

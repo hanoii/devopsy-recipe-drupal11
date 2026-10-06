@@ -1,0 +1,4 @@
+#!/bin/sh
+# drush wrapper: goes through the entrypoint so it always runs as the app
+# user, even from `docker compose exec`, which runs as root.
+exec entrypoint /app/vendor/bin/drush --root=/app/web "$@"

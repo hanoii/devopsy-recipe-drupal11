@@ -1,0 +1,18 @@
+# Installed by composer
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+/web/libraries/
+/drush/Commands/contrib/
+
+# Local files and settings
+/web/sites/*/files/
+/web/sites/*/settings.local.php
+
+# devopsy: secrets, data and per-machine files
+/.devopsy/.env
+/.devopsy/mnt
+/.devopsy/compose.override.y*ml
+/.devopsy/targets.local.yaml

@@ -1,0 +1,33 @@
+#!/bin/sh
+## Description: Build, start and update the site (run on the server by release)
+# Run on the server by `devopsy @<target> release deploy`, or locally.
+#
+# The first run generates the secrets into .env and installs the site from
+# config/sync; later runs apply updates and config with `drush deploy`.
+set -eu
+
+env_file="$DEVOPSY_PROJECT_DIR/.env"
+
+# secret NAME: append a random value to .env unless NAME is already set there.
+secret() {
+  if ! grep -q "^$1=" "$env_file" 2>/dev/null; then
+    # Keep the new line separate when .env does not end with a newline.
+    if [ -s "$env_file" ] && [ "$(tail -c 1 "$env_file")" != "" ]; then
+      echo >> "$env_file"
+    fi
+    echo "$1=$(head -c 48 /dev/urandom | base64 | tr -d '\n' | tr '+/' '-_')" >> "$env_file"
+    echo "deploy: generated $1 in .env" >&2
+  fi
+}
+secret DB_PASSWORD
+secret DRUPAL_HASH_SALT
+
+devopsy build --pull
+devopsy up -d --wait --remove-orphans
+
+if devopsy exec -T app drush status --field=bootstrap 2>/dev/null | grep -q Successful; then
+  devopsy exec -T app drush deploy --yes
+else
+  echo "deploy: no site yet, installing it from config/sync" >&2
+  devopsy exec -T app drush site:install --existing-config --yes
+fi

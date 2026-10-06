@@ -1,0 +1,72 @@
+# Drupal 11 behind devopsy-traefik: the app image is built from this project
+# (on the server, with targets in build mode), MariaDB keeps the data.
+#
+# DB_PASSWORD and DRUPAL_HASH_SALT are secrets in .devopsy/.env (on servers
+# shared/.env). `devopsy deploy` generates them on its first run.
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devopsy/Dockerfile
+    restart: unless-stopped
+    # The entrypoint starts as root to own the storage mount, then drops to the
+    # app user (UID 10001, set in the Dockerfile).
+    read_only: true
+    # The only writable paths: /tmp (also Caddy's data, see the Dockerfile)
+    # and the storage mount.
+    tmpfs:
+      - /tmp
+    environment:
+      DB_HOST: database
+      DB_NAME: drupal
+      DB_USER: drupal
+      DB_PASSWORD: ${DB_PASSWORD:?run devopsy deploy once to generate it}
+      DRUPAL_HASH_SALT: ${DRUPAL_HASH_SALT:?run devopsy deploy once to generate it}
+      # Space separated hosts Drupal answers to (trusted_host_patterns).
+      DRUPAL_TRUSTED_HOSTS: ${DEVOPSY_PUBLIC_HOST:-app.localhost} ${DEVOPSY_DOMAINS:-}
+      DRUSH_OPTIONS_URI: https://${DEVOPSY_PUBLIC_HOST:-app.localhost}
+    volumes:
+      - ./mnt/storage:/app/storage
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      # Caddy only: Drupal answers with a redirect until it is installed.
+      test: [CMD, curl, -fsS, -o, /dev/null, http://localhost:8080/robots.txt]
+      interval: 10s
+      start_period: 30s
+      start_interval: 1s
+    labels:
+      - traefik.enable=true
+      # <project>.<server's public domain> plus the target's DEVOPSY_DOMAINS.
+      - traefik.http.routers.${DEVOPSY_PROJECT_NAME:-app}.rule=${DEVOPSY_HOST_RULE:-Host(`app.localhost`)}
+      # letsencrypt1 (HTTP-01, the default), acmedns or cloudflare (DNS-01),
+      # per target, in targets.yaml.
+      - traefik.http.routers.${DEVOPSY_PROJECT_NAME:-app}.tls.certresolver=${CERTRESOLVER:-letsencrypt1}
+      # The FrankenPHP image exposes several ports: tell Traefik which one.
+      - traefik.http.services.${DEVOPSY_PROJECT_NAME:-app}.loadbalancer.server.port=8080
+    networks: [default, traefik]
+
+  database:
+    image: mariadb:11
+    restart: unless-stopped
+    # The official image starts as root to own its data directory, then runs
+    # as its own mysql user (999).
+    environment:
+      MARIADB_DATABASE: drupal
+      MARIADB_USER: drupal
+      MARIADB_PASSWORD: ${DB_PASSWORD:?run devopsy deploy once to generate it}
+      MARIADB_RANDOM_ROOT_PASSWORD: "1"
+    command: --max-allowed-packet=64M --transaction-isolation=READ-COMMITTED
+    volumes:
+      - ./mnt/database:/var/lib/mysql
+    healthcheck:
+      test: [CMD, healthcheck.sh, --connect, --innodb_initialized]
+      interval: 10s
+      start_period: 60s
+      start_interval: 1s
+
+networks:
+  traefik:
+    name: traefik-main
+    external: true
