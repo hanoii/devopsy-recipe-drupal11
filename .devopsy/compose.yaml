@@ -38,7 +38,7 @@ services:
       start_interval: 1s
     labels:
       - traefik.enable=true
-      # <project>.<server's public domain> plus the target's DEVOPSY_DOMAINS.
+      # <project>.<DEVOPSY_PUBLIC_DOMAIN> plus the target's DEVOPSY_DOMAINS.
       - traefik.http.routers.${DEVOPSY_PROJECT_NAME:-app}.rule=${DEVOPSY_HOST_RULE:-Host(`app.localhost`)}
       # letsencrypt1 (HTTP-01, the default), acmedns or cloudflare (DNS-01),
       # per target, in targets.yaml.

@@ -14,6 +14,14 @@ the environment:
 echo DEVOPSY_TARGET_HOST=devopsy@203.0.113.10 >> .devopsy/.env
 ```
 
+Optionally, give it the server's public domain, so each environment gets
+`<project>.<domain>` (once per target; it stays in the server's
+`shared/.env`, out of this repository):
+
+```sh
+devopsy @prod --vars set --show DEVOPSY_PUBLIC_DOMAIN   # like vm1.example.com
+```
+
 ```sh
 devopsy @prod release          # build on the server and start the site (runs deploy)
 devopsy @prod drush site:install --yes   # or browse to the site for the installer
