@@ -2,8 +2,9 @@
 # mode: build uploads the whole project and builds the image on the server.
 # The host comes from DEVOPSY_TARGET_HOST (or DEVOPSY_TARGET_HOST_PROD), in
 # .devopsy/.env or the environment, like DEVOPSY_TARGET_HOST=devopsy@203.0.113.10.
-# The server's public domain, for <project>.<domain> URLs, is set once per
-# target on the server: devopsy @<target> --vars set --show DEVOPSY_PUBLIC_DOMAIN
+# Each environment also gets <project>.<server's public domain>, from the
+# server's Traefik at each release; override it, or set it empty for none,
+# with: devopsy @<target> --vars set --show DEVOPSY_PUBLIC_DOMAIN
 prod:
   path: /srv/drupal11-prod
   mode: build
