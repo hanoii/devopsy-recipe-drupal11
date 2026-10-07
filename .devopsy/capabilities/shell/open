@@ -1,0 +1,26 @@
+#!/bin/sh
+# devopsy's shell capability: what `devopsy --shell [service] [exec options...]`
+# runs, locally and on servers (`devopsy @prod --shell`).
+#   devopsy --shell                    bash in app, as the app user (UID 10001)
+#   devopsy --shell app --user root    as root
+#   devopsy --shell database           bash in the database container
+# compose exec skips the entrypoint, which drops to the app user: without
+# --user app, a shell in app would be root's.
+set -eu
+
+service=app
+case ${1:-} in
+  '' | -*) ;;
+  *) service=$1; shift ;;
+esac
+user=
+for arg in "$@"; do
+  case $arg in -u | --user | --user=*) user=1 ;; esac
+done
+if [ -z "$user" ] && [ "$service" = app ]; then
+  set -- --user app "$@"
+fi
+if ! [ -t 0 ]; then
+  set -- -T "$@"
+fi
+exec devopsy exec "$@" "$service" bash

@@ -20,13 +20,13 @@ it empty for none, per target: `devopsy @prod --vars set --show
 DEVOPSY_WILDCARD_DOMAIN`.
 
 ```sh
-devopsy @prod release          # build on the server and start the site (runs deploy)
+devopsy @prod --release          # build on the server and start the site (runs deploy)
 devopsy @prod drush site:install --yes   # or browse to the site for the installer
 devopsy @prod drush uli        # a one-time login link
-devopsy @prod shell            # bash in the app container, as the app user
-devopsy @prod --shell          # a shell on the server, in the current release
+devopsy @prod --shell          # bash in the app container, as the app user
+devopsy @prod --shell-host     # a shell on the server, in the current release
 devopsy @prod logs -f app
-devopsy @prod releases
+devopsy @prod --releases
 ```
 
 The first `deploy` generates `DB_PASSWORD` and `DRUPAL_HASH_SALT` into the
@@ -55,9 +55,11 @@ configuration, only database updates until then.
 - **Ownership.** `shared/mnt` belongs to the deploy user, so the entrypoint
   starts as root, gives `/app/storage` to `app` on the first start, and drops
   to `app` with `setpriv`. `drush` in the image is a wrapper that does the
-  same, so `devopsy exec app drush` never runs as root. `devopsy shell`
-  opens bash as `app` too (`-u root` for root, `-s database` for another
-  service): `compose exec` skips the entrypoint.
+  same, so `devopsy exec app drush` never runs as root. `devopsy --shell`
+  opens bash as `app` too, through the recipe's `shell` capability
+  (`.devopsy/capabilities/shell/open`): `devopsy --shell app --user root`
+  for root, `devopsy --shell database` for another service. `compose exec`
+  skips the entrypoint, hence the capability rather than devopsy's default.
 - **Settings** (`web/sites/default/settings.php`) come from the environment
   set in `compose.yaml`: database, hash salt, trusted hosts (the wildcard URL
   plus `DEVOPSY_DOMAINS`), and Traefik as the reverse proxy for client IPs
@@ -78,7 +80,7 @@ devopsy exec -T app sh -c 'cd /tmp/sync && tar c .' | tar x -C config/sync
 
 ## Rolling back
 
-`devopsy @prod rollback` switches to the previous release and runs `deploy`
+`devopsy @prod --rollback` switches to the previous release and runs `deploy`
 there, which builds it again (from cache). Database updates are not undone.
 
 ## Locally
