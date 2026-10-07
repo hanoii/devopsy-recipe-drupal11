@@ -24,7 +24,11 @@ services:
       DRUPAL_HASH_SALT: ${DRUPAL_HASH_SALT:?run devopsy deploy once to generate it}
       # Space separated hosts Drupal answers to (trusted_host_patterns).
       DRUPAL_TRUSTED_HOSTS: ${DEVOPSY_WILDCARD_HOST:-app.localhost} ${DEVOPSY_DOMAINS:-}
-      DRUSH_OPTIONS_URI: https://${DEVOPSY_WILDCARD_HOST:-app.localhost}
+      # drush's URL (docker/drush): the first of DEVOPSY_DOMAINS, else the
+      # wildcard host; DRUSH_OPTIONS_URI, when set, wins.
+      DEVOPSY_DOMAINS: ${DEVOPSY_DOMAINS:-}
+      DEVOPSY_WILDCARD_HOST: ${DEVOPSY_WILDCARD_HOST:-}
+      DRUSH_OPTIONS_URI: ${DRUSH_OPTIONS_URI:-}
     volumes:
       - ./mnt/storage:/app/storage
     depends_on:
@@ -37,6 +41,10 @@ services:
       start_period: 30s
       start_interval: 1s
     labels:
+      # devopsy --shell: bash here by default, as the app user (compose exec
+      # skips the entrypoint, which drops from root to it).
+      - devopsy.shell=true
+      - devopsy.shell.user=app
       - traefik.enable=true
       # <project>.<DEVOPSY_WILDCARD_DOMAIN> plus the target's DEVOPSY_DOMAINS.
       # The fallback, for plain docker compose, is a HostRegexp: Traefik

@@ -56,10 +56,10 @@ configuration, only database updates until then.
   starts as root, gives `/app/storage` to `app` on the first start, and drops
   to `app` with `setpriv`. `drush` in the image is a wrapper that does the
   same, so `devopsy exec app drush` never runs as root. `devopsy --shell`
-  opens bash as `app` too, through the recipe's `shell` capability
-  (`.devopsy/capabilities/shell/open`): `devopsy --shell app --user root`
-  for root, `devopsy --shell database` for another service. `compose exec`
-  skips the entrypoint, hence the capability rather than devopsy's default.
+  opens bash as `app` too: `compose exec` skips the entrypoint, so the
+  `app` service's labels say so (`devopsy.shell=true`,
+  `devopsy.shell.user=app`). `devopsy --shell app --user root` for root,
+  `devopsy --shell database` for another service.
 - **Settings** (`web/sites/default/settings.php`) come from the environment
   set in `compose.yaml`: database, hash salt, trusted hosts (the wildcard URL
   plus `DEVOPSY_DOMAINS`), and Traefik as the reverse proxy for client IPs
