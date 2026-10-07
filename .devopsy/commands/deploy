@@ -1,6 +1,7 @@
 #!/bin/sh
 ## Description: Build, start and update the site (run on the server by release)
-# Run on the server by `devopsy @<target> release deploy`, or locally.
+# The targets' release and rollback remote step (targets.yaml), run on the
+# server by `devopsy @<target> release` and `rollback`; or locally.
 #
 # The first run generates the secrets into .env. It never installs the site:
 # browse to it for Drupal's installer, or run `devopsy drush site:install`.

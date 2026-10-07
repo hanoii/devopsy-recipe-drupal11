@@ -5,3 +5,7 @@
 prod:
   path: /srv/drupal11-prod
   mode: build
+  release:
+    remote: deploy
+  rollback:
+    remote: deploy

@@ -15,7 +15,7 @@ echo DEVOPSY_TARGET_HOST=devopsy@203.0.113.10 >> .devopsy/.env
 ```
 
 ```sh
-devopsy @prod release deploy   # build on the server and start the site
+devopsy @prod release          # build on the server and start the site (runs deploy)
 devopsy @prod drush site:install --yes   # or browse to the site for the installer
 devopsy @prod drush uli        # a one-time login link
 devopsy @prod shell            # bash in the app container, as the app user
@@ -73,8 +73,8 @@ devopsy exec -T app sh -c 'cd /tmp/sync && tar c .' | tar x -C config/sync
 
 ## Rolling back
 
-`devopsy @prod rollback deploy` switches to the previous release and builds
-it again (from cache). Database updates are not undone.
+`devopsy @prod rollback` switches to the previous release and runs `deploy`
+there, which builds it again (from cache). Database updates are not undone.
 
 ## Locally
 

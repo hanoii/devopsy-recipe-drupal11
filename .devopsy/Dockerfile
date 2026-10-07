@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Drupal on FrankenPHP (Caddy + PHP 8.4), built on the server by
-# `devopsy @<target> release deploy` (mode: build). Code is owned by root and
+# `devopsy @<target> release` (mode: build). Code is owned by root and
 # read-only; the only writable path at runtime is /app/storage, a bind mount
 # of .devopsy/mnt/storage (see docker/entrypoint).
 #
