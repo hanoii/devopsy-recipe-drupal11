@@ -23,8 +23,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?run devopsy deploy once to generate it}
       DRUPAL_HASH_SALT: ${DRUPAL_HASH_SALT:?run devopsy deploy once to generate it}
       # Space separated hosts Drupal answers to (trusted_host_patterns).
-      DRUPAL_TRUSTED_HOSTS: ${DEVOPSY_PUBLIC_HOST:-app.localhost} ${DEVOPSY_DOMAINS:-}
-      DRUSH_OPTIONS_URI: https://${DEVOPSY_PUBLIC_HOST:-app.localhost}
+      DRUPAL_TRUSTED_HOSTS: ${DEVOPSY_WILDCARD_HOST:-app.localhost} ${DEVOPSY_DOMAINS:-}
+      DRUSH_OPTIONS_URI: https://${DEVOPSY_WILDCARD_HOST:-app.localhost}
     volumes:
       - ./mnt/storage:/app/storage
     depends_on:
@@ -38,7 +38,7 @@ services:
       start_interval: 1s
     labels:
       - traefik.enable=true
-      # <project>.<DEVOPSY_PUBLIC_DOMAIN> plus the target's DEVOPSY_DOMAINS.
+      # <project>.<DEVOPSY_WILDCARD_DOMAIN> plus the target's DEVOPSY_DOMAINS.
       # The fallback, for plain docker compose, is a HostRegexp: Traefik
       # requests no certificate for it, so a target without hosts logs no
       # ACME errors.

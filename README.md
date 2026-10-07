@@ -14,10 +14,10 @@ the environment:
 echo DEVOPSY_TARGET_HOST=devopsy@203.0.113.10 >> .devopsy/.env
 ```
 
-Each environment also gets `<project>.<server's public domain>`, which
+Each environment also gets `<project>.<server's wildcard domain>`, which
 devopsy asks the server's Traefik for at each release. Override it, or set
 it empty for none, per target: `devopsy @prod --vars set --show
-DEVOPSY_PUBLIC_DOMAIN`.
+DEVOPSY_WILDCARD_DOMAIN`.
 
 ```sh
 devopsy @prod release          # build on the server and start the site (runs deploy)
@@ -59,7 +59,7 @@ configuration, only database updates until then.
   opens bash as `app` too (`-u root` for root, `-s database` for another
   service): `compose exec` skips the entrypoint.
 - **Settings** (`web/sites/default/settings.php`) come from the environment
-  set in `compose.yaml`: database, hash salt, trusted hosts (the public URL
+  set in `compose.yaml`: database, hash salt, trusted hosts (the wildcard URL
   plus `DEVOPSY_DOMAINS`), and Traefik as the reverse proxy for client IPs
   and HTTPS.
 - **Code changes need a release.** OPcache never revalidates (the code cannot
