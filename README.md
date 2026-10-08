@@ -18,7 +18,7 @@ Point the `prod` target at your server in `.devopsy/.env` (gitignored), or in
 the environment:
 
 ```sh
-echo DEVOPSY_TARGET_HOST=devopsy@203.0.113.10 >> .devopsy/.env
+echo DEVOPSY_SERVER=devopsy@203.0.113.10 >> .devopsy/.env
 ```
 
 Each environment also gets `<project>.<server's wildcard domain>`, which

@@ -1,17 +1,17 @@
 # devopsy config: see devopsy-cli's README, "Remote targets". Committed: no
-# secrets here. Hosts come from DEVOPSY_TARGET_HOST (or
-# DEVOPSY_TARGET_HOST_<TARGET>), in .devopsy/.env or the environment, like
-# DEVOPSY_TARGET_HOST=devopsy@203.0.113.10. Each target lives in
-# <project>/<target> under the server's release root, and gets
-# <project>-<target>.<server's wildcard domain>, imported from the server's
-# proxy at each release (compose.yaml's devopsy.import label); override it,
-# or set it empty for none, with:
-#   devopsy @<target> --vars set --show DEVOPSY_WILDCARD_DOMAIN
+# secrets and no servers here. The server comes from the address
+# (devopsy @vm1:prod), or DEVOPSY_SERVER (or DEVOPSY_SERVER_<ENVIRONMENT>) in
+# .devopsy/.env or the environment, like DEVOPSY_SERVER=devopsy@203.0.113.10.
+# Each environment lives in <project>/<environment> under the server's
+# release root, and gets <project>-<environment>.<server's wildcard domain>,
+# imported from the server's proxy at each release (compose.yaml's
+# devopsy.import label); override it, or set it empty for none, with:
+#   devopsy @prod --vars set --show DEVOPSY_WILDCARD_DOMAIN
 # Build mode, devopsy's default: a release uploads the whole project and the
 # image is built on the server.
 project: drupal11
 defaults:
   release: {remote: deploy}
   rollback: {remote: deploy}
-targets:
+environments:
   prod: {}
