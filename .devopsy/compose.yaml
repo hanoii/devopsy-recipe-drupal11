@@ -45,6 +45,10 @@ services:
       # skips the entrypoint, which drops from root to it).
       - devopsy.shell=true
       - devopsy.shell.user=app
+      # Each release gets the server's wildcard domain from its proxy
+      # (devopsy-traefik exports it), for <project>.<domain>. Without a
+      # proxy running the release fails: the project expects one.
+      - devopsy.import.DEVOPSY_WILDCARD_DOMAIN=proxy/WILDCARD_DOMAIN
       - traefik.enable=true
       # <project>.<DEVOPSY_WILDCARD_DOMAIN> plus the target's DEVOPSY_DOMAINS.
       # The fallback, for plain docker compose, is a HostRegexp: Traefik

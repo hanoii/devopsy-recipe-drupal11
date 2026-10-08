@@ -15,8 +15,9 @@ echo DEVOPSY_TARGET_HOST=devopsy@203.0.113.10 >> .devopsy/.env
 ```
 
 Each environment also gets `<project>.<server's wildcard domain>`, which
-devopsy asks the server's Traefik for at each release. Override it, or set
-it empty for none, per target: `devopsy @prod --vars set --show
+each release imports from the server's proxy (devopsy-traefik), through the
+`devopsy.import` label in `compose.yaml`: a release fails while no proxy
+runs. Override it, or set it empty for none, per target: `devopsy @prod --vars set --show
 DEVOPSY_WILDCARD_DOMAIN`.
 
 ```sh
