@@ -1,5 +1,5 @@
 {
-    "name": "hanoii/devopsy-recipe-drupal11",
+    "name": "hanoii/devopsy-template-drupal11",
     "description": "Drupal 11 on devopsy: built on the server, read-only at runtime",
     "type": "project",
     "license": "GPL-2.0-or-later",

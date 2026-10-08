@@ -1,9 +1,16 @@
-# devopsy-recipe-drupal11
+# devopsy-template-drupal11
 
 Drupal 11 on a [devopsy](https://github.com/hanoii/devopsy-cli) server: the
 image is built on the server from this project, the code is read-only at
 runtime, and MariaDB 11 keeps the data. Use it to try build-mode releases, or
 as a starting point for a Drupal site.
+
+## Using this template
+
+A starting point to own, not a dependency: start a project from it on
+GitHub ("Use this template"), or clone it and keep this repository as a
+remote (`upstream`) to pull its changes when you choose. Nothing updates
+your copy, or what runs on your servers, but your own release.
 
 ## Try it
 
@@ -15,7 +22,7 @@ echo DEVOPSY_TARGET_HOST=devopsy@203.0.113.10 >> .devopsy/.env
 ```
 
 Each environment also gets `<project>.<server's wildcard domain>`, which
-each release imports from the server's proxy (devopsy-traefik), through the
+each release imports from the server's proxy (devopsy-template-traefik), through the
 `devopsy.import` label in `compose.yaml`: a release fails while no proxy
 runs. The release says what it imported; `devopsy @prod --debug imports`
 shows it later, and whether the proxy has changed it since. Override it,
@@ -88,8 +95,8 @@ there, which builds it again (from cache). Database updates are not undone.
 
 ## Locally
 
-With a local devopsy-traefik, the site is at
-`https://devopsy-recipe-drupal11.localhost`:
+With a local devopsy-template-traefik, the site is at
+`https://devopsy-template-drupal11.localhost`:
 
 ```sh
 devopsy deploy
