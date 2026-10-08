@@ -56,7 +56,7 @@ services:
       # ACME errors.
       - traefik.http.routers.${DEVOPSY_PROJECT_NAME:-app}.rule=${DEVOPSY_HOST_RULE:-HostRegexp(`^app\.localhost$`)}
       # letsencrypt1 (HTTP-01, the default), acmedns or cloudflare (DNS-01),
-      # per target, in targets.yaml.
+      # per target, in config.yaml.
       - traefik.http.routers.${DEVOPSY_PROJECT_NAME:-app}.tls.certresolver=${CERTRESOLVER:-letsencrypt1}
       # The FrankenPHP image exposes several ports: tell Traefik which one.
       - traefik.http.services.${DEVOPSY_PROJECT_NAME:-app}.loadbalancer.server.port=8080

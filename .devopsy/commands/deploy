@@ -1,6 +1,6 @@
 #!/bin/sh
 ## Description: Build, start and update the site (run on the server by release)
-# The targets' release and rollback remote step (targets.yaml), run on the
+# The targets' release and rollback remote step (config.yaml), run on the
 # server by `devopsy @<target> --release` and `--rollback`; or locally.
 #
 # The first run generates the secrets into .env. It never installs the site:

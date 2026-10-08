@@ -49,7 +49,7 @@ configuration, only database updates until then.
 
 ## How it works
 
-- **Build mode,** devopsy's default (no `mode:` in `targets.yaml`): a release uploads the
+- **Build mode,** devopsy's default (no `mode:` in `config.yaml`): a release uploads the
   whole project as git sees it (about 1 MB) and `deploy` runs `devopsy build`
   there. Composer runs inside the image; `vendor/` and `web/core` are never
   committed or uploaded. Docker's build cache makes a release without
