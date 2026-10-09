@@ -85,10 +85,11 @@ configuration, only database updates until then.
   the environment's own), and Traefik as the reverse proxy for client IPs
   and HTTPS.
 - **Basic auth.** Set `SITE_BASIC_AUTH=user:password` in `.devopsy/.env`
-  (on servers `devopsy @prod --vars set SITE_BASIC_AUTH`, then a release)
-  and Caddy asks for it on every request. The entrypoint hashes the
-  password and drops the plaintext before PHP starts; the healthcheck,
-  from inside the container, skips it. Unset, the site is open.
+  (on servers `devopsy @prod --vars set SITE_BASIC_AUTH`, then `devopsy
+  @prod reload` or a release) and Caddy asks for it on every request. The
+  entrypoint hashes the password and drops the plaintext before PHP starts;
+  the healthcheck, from inside the container, skips it. Unset, the site is
+  open.
 - **Code changes need a release.** OPcache never revalidates (the code cannot
   change), and modules are added with composer, then released.
 
