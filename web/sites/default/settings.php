@@ -31,10 +31,9 @@ $settings['file_temp_path'] = '/tmp';
 $settings['update_free_access'] = FALSE;
 $settings['allow_authorize_operations'] = FALSE;
 
-$settings['trusted_host_patterns'] = array_map(
-  fn ($host) => '^' . preg_quote($host) . '$',
-  preg_split('/[\s,]+/', getenv('DRUPAL_TRUSTED_HOSTS') ?: '', -1, PREG_SPLIT_NO_EMPTY),
-);
+// Traefik only routes this environment's hosts (its router rule), so the
+// Host header is already restricted.
+$settings['trusted_host_patterns'] = ['.*'];
 
 // Requests only reach the app through devopsy-traefik, over Docker networks,
 // and Traefik drops X-Forwarded-* headers from untrusted peers. So the peer is

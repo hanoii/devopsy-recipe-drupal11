@@ -22,9 +22,7 @@ services:
       DB_USER: drupal
       DB_PASSWORD: ${DB_PASSWORD:?run devopsy deploy once to generate it}
       DRUPAL_HASH_SALT: ${DRUPAL_HASH_SALT:?run devopsy deploy once to generate it}
-      # Space separated hosts Drupal answers to (trusted_host_patterns), and
       # drush's URL (links, drush uli), from capabilities/env/compute.
-      DRUPAL_TRUSTED_HOSTS: ${SITE_HOSTS:-app.localhost}
       DRUSH_OPTIONS_URI: ${DRUSH_OPTIONS_URI:-${SITE_URL:-}}
     volumes:
       - ./mnt/storage:/app/storage

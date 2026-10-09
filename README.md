@@ -71,9 +71,8 @@ configuration, only database updates until then.
   `devopsy.shell.user=app`). `devopsy --shell app --user root` for root,
   `devopsy --shell database` for another service.
 - **Settings** (`web/sites/default/settings.php`) come from the environment
-  set in `compose.yaml`: database, hash salt, trusted hosts (`SITE_HOSTS`: the
-  wildcard URL plus `DEVOPSY_DOMAINS`, computed by
-  `.devopsy/capabilities/env/compute`), and Traefik as the reverse proxy for client IPs
+  set in `compose.yaml`: database, hash salt, any host (Traefik only routes
+  the environment's own), and Traefik as the reverse proxy for client IPs
   and HTTPS.
 - **Code changes need a release.** OPcache never revalidates (the code cannot
   change), and modules are added with composer, then released.
