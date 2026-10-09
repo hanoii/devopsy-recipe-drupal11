@@ -13,5 +13,6 @@ project: drupal11
 defaults:
   release: {prepare: secrets, run: deploy}
   rollback: {prepare: secrets, run: deploy}
+  destroy: destroy
 environments:
   prod: {}

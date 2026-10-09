@@ -38,6 +38,7 @@ devopsy @prod --shell          # bash in the app container, as the app user
 devopsy @prod --shell-host     # a shell on the server, in the current release
 devopsy @prod logs -f app
 devopsy @prod --releases
+devopsy @prod --destroy        # remove it all: containers, database, files (runs destroy)
 ```
 
 The first release generates `DB_PASSWORD` and `DRUPAL_HASH_SALT` into the
@@ -64,6 +65,10 @@ configuration, only database updates until then.
   writable paths are `/tmp` (a tmpfs, also Caddy's state) and `/app/storage`,
   a bind mount of `.devopsy/mnt/storage` (on servers `shared/mnt/storage`)
   holding public files (`sites/default/files` links there) and private files.
+- **Destroying.** `destroy`, the environments' destroy step, takes the
+  containers down and empties `mnt/` from the database image as root: its
+  files belong to `app` and MariaDB's user, which the deploy user cannot
+  remove. Then devopsy removes the environment's directory.
 - **Ownership.** `shared/mnt` belongs to the deploy user, so the entrypoint
   starts as root, gives `/app/storage` to `app` on the first start, and drops
   to `app` with `setpriv`. `drush` in the image is a wrapper that does the
