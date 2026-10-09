@@ -26,6 +26,20 @@
 		format console
 	}
 
+	# HTTP basic auth, only when SITE_BASIC_AUTH (user:password) is set:
+	# docker/entrypoint hashes it into SITE_BASIC_AUTH_USER and
+	# SITE_BASIC_AUTH_HASH. The default hash (of a random, discarded
+	# password) only keeps this file valid when it is unset; the matcher is
+	# false then. Requests from inside the container (the healthcheck) skip
+	# it: remote_ip, not client_ip, so a forged X-Forwarded-For cannot match.
+	@basic_auth {
+		expression `{env.SITE_BASIC_AUTH_HASH} != ""`
+		not remote_ip 127.0.0.1 ::1
+	}
+	basic_auth @basic_auth {
+		{$SITE_BASIC_AUTH_USER:admin} {$SITE_BASIC_AUTH_HASH:$2a$10$kMUNBF5FnoGFGaDNESttce7OOf9mPSS/6Bh34E.DC47g3Yh9gpeNe}
+	}
+
 	# Same as Drupal's .htaccess rules: no hidden paths at any level, except .well-known.
 	@dotfiles {
 		path_regexp /\.

@@ -11,6 +11,24 @@ set -eu
 
 STORAGE_DIR="${STORAGE_DIR:-/app/storage}"
 
+# HTTP basic auth (see docker/Caddyfile): SITE_BASIC_AUTH=user:password.
+# Caddy only takes a bcrypt hash: hash it here and drop the plaintext before
+# PHP starts.
+if [ "${1:-}" = frankenphp ] && [ -n "${SITE_BASIC_AUTH:-}" ]; then
+  case $SITE_BASIC_AUTH in
+    ?*:?*) ;;
+    *)
+      echo "entrypoint: SITE_BASIC_AUTH must be user:password" >&2
+      exit 1
+      ;;
+  esac
+  SITE_BASIC_AUTH_USER=${SITE_BASIC_AUTH%%:*}
+  SITE_BASIC_AUTH_HASH=$(frankenphp hash-password --plaintext "${SITE_BASIC_AUTH#*:}")
+  export SITE_BASIC_AUTH_USER SITE_BASIC_AUTH_HASH
+  unset SITE_BASIC_AUTH
+  echo "entrypoint: basic auth enabled for $SITE_BASIC_AUTH_USER" >&2
+fi
+
 if [ "$(id -u)" != "0" ]; then
   exec "$@"
 fi

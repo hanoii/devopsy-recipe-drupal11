@@ -22,6 +22,9 @@ services:
       DB_USER: drupal
       DB_PASSWORD: ${DB_PASSWORD:?run devopsy secrets to generate it}
       DRUPAL_HASH_SALT: ${DRUPAL_HASH_SALT:?run devopsy secrets to generate it}
+      # Optional HTTP basic auth for the whole site, user:password (in .env,
+      # on servers shared/.env): docker/Caddyfile.
+      SITE_BASIC_AUTH: ${SITE_BASIC_AUTH:-}
       # drush's URL (links, drush uli), from capabilities/env/compute.
       DRUSH_OPTIONS_URI: ${DRUSH_OPTIONS_URI:-${SITE_URL:-}}
     volumes:

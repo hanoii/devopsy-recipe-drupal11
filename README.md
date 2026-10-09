@@ -56,7 +56,10 @@ configuration, only database updates until then.
   whole project as git sees it (about 1 MB) and `deploy` runs `devopsy build`
   there. Composer runs inside the image; `vendor/` and `web/core` are never
   committed or uploaded. Docker's build cache makes a release without
-  dependency changes take seconds.
+  dependency changes take seconds: composer keeps its downloads in a
+  BuildKit cache mount, and the image copies vendor, core and contrib in
+  their own layers before the code, so most releases only rebuild the code
+  layer (well under 1 MB here).
 - **The image** (`.devopsy/Dockerfile`): FrankenPHP (Caddy and PHP 8.4). Code
   is owned by root and readable only; the app runs as `app`, UID 10001, never
   root and never 1000, the deploy user on devopsy servers. The UID is fixed in
@@ -81,6 +84,11 @@ configuration, only database updates until then.
   set in `compose.yaml`: database, hash salt, any host (Traefik only routes
   the environment's own), and Traefik as the reverse proxy for client IPs
   and HTTPS.
+- **Basic auth.** Set `SITE_BASIC_AUTH=user:password` in `.devopsy/.env`
+  (on servers `devopsy @prod --vars set SITE_BASIC_AUTH`, then a release)
+  and Caddy asks for it on every request. The entrypoint hashes the
+  password and drops the plaintext before PHP starts; the healthcheck,
+  from inside the container, skips it. Unset, the site is open.
 - **Code changes need a release.** OPcache never revalidates (the code cannot
   change), and modules are added with composer, then released.
 
