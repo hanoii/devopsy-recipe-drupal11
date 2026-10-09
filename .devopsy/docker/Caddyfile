@@ -3,7 +3,7 @@
 # https://caddyserver.com/docs/caddyfile
 {
 	skip_install_trust
-	# TLS is terminated by devopsy-traefik.
+	# TLS is terminated by devopsy-template-traefik.
 	auto_https off
 	admin off
 	persist_config off

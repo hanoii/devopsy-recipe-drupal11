@@ -9,10 +9,9 @@ node_modules
 
 # devopsy's local and server-only files: secrets and data
 .devopsy/.env
-.devopsy/target.env
 .devopsy/mnt
-.devopsy/targets.local.yaml
 .devopsy/compose.override.y*ml
+.devopsy/config.local.yaml
 
 # Installed by composer inside the image
 vendor

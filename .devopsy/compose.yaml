@@ -41,7 +41,7 @@ services:
       - devopsy.shell=true
       - devopsy.shell.user=app
       # Each release gets the server's wildcard domain from its proxy
-      # (devopsy-template-traefik exports it), for <project>.<domain>. Without a
+      # (devopsy-template-traefik exports it), for <project>-<environment>.<domain>. Without a
       # proxy running the release fails: the project expects one.
       - devopsy.import.DEVOPSY_WILDCARD_DOMAIN=proxy/WILDCARD_DOMAIN
       - traefik.enable=true

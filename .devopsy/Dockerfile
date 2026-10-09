@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Drupal on FrankenPHP (Caddy + PHP 8.4), built on the server by
-# `devopsy @<target> release` (mode: build). Code is owned by root and
+# `devopsy @<target> --release` (build mode, devopsy's default). Code is owned by root and
 # read-only; the only writable path at runtime is /app/storage, a bind mount
 # of .devopsy/mnt/storage (see docker/entrypoint).
 #
@@ -64,7 +64,7 @@ COPY .devopsy/docker/php.ini "$PHP_INI_DIR/conf.d/zz-app.ini"
 COPY --chmod=755 .devopsy/docker/entrypoint /usr/local/bin/entrypoint
 # Keep /app/vendor/bin out of PATH: its drush would win over this wrapper and
 # run as root from `docker compose exec`.
-COPY --chmod=755 .devopsy/docker/drush /usr/local/bin/drush
+COPY --chmod=755 .devopsy/docker/drush-wrapper /usr/local/bin/drush
 
 # Normalize permissions while copying (no extra layer): the build context
 # keeps the host's modes, and the app user must be able to read everything but
