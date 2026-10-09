@@ -1,29 +1,16 @@
 #!/bin/sh
 ## Description: Build, start and update the site (run on the server by release)
-# The targets' release and rollback remote step (config.yaml), run on the
+# The environments' release and rollback run step (config.yaml), run on the
 # server by `devopsy @<target> --release` and `--rollback`; or locally.
 #
-# The first run generates the secrets into .env. It never installs the site:
+# It generates missing secrets first (secrets). It never installs the site:
 # browse to it for Drupal's installer, or run `devopsy drush site:install`.
 # Once installed, later runs apply updates: `drush deploy` when config/sync
 # has exported configuration, otherwise database updates only.
 set -eu
 
-env_file="$DEVOPSY_PROJECT_DIR/.env"
-
-# secret NAME: append a random value to .env unless NAME is already set there.
-secret() {
-  if ! grep -q "^$1=" "$env_file" 2>/dev/null; then
-    # Keep the new line separate when .env does not end with a newline.
-    if [ -s "$env_file" ] && [ "$(tail -c 1 "$env_file")" != "" ]; then
-      echo >> "$env_file"
-    fi
-    echo "$1=$(head -c 48 /dev/urandom | base64 | tr -d '\n' | tr '+/' '-_')" >> "$env_file"
-    echo "deploy: generated $1 in .env" >&2
-  fi
-}
-secret DB_PASSWORD
-secret DRUPAL_HASH_SALT
+# Secrets first, as the release's prepare step already did: for local use.
+devopsy secrets
 
 devopsy build --pull
 devopsy up -d --wait --remove-orphans

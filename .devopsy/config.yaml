@@ -11,7 +11,7 @@
 # image is built on the server.
 project: drupal11
 defaults:
-  release: {remote: deploy}
-  rollback: {remote: deploy}
+  release: {prepare: secrets, run: deploy}
+  rollback: {prepare: secrets, run: deploy}
 environments:
   prod: {}

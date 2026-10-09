@@ -39,8 +39,9 @@ devopsy @prod logs -f app
 devopsy @prod --releases
 ```
 
-The first `deploy` generates `DB_PASSWORD` and `DRUPAL_HASH_SALT` into the
-server's `shared/.env` and starts an empty site: it never installs Drupal.
+The first release generates `DB_PASSWORD` and `DRUPAL_HASH_SALT` into the
+server's `shared/.env` (`secrets`, its prepare step, before it goes live),
+then `deploy` starts an empty site: it never installs Drupal.
 Browse to it for Drupal's installer, which skips the database step since
 settings come from the environment, or install with drush. Later deploys
 update an installed site: `drush deploy` (database updates, config import,

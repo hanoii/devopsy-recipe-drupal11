@@ -2,7 +2,7 @@
 # (on the server, with targets in build mode), MariaDB keeps the data.
 #
 # DB_PASSWORD and DRUPAL_HASH_SALT are secrets in .devopsy/.env (on servers
-# shared/.env). `devopsy deploy` generates them on its first run.
+# shared/.env). `devopsy secrets` generates them (a release runs it before going live).
 services:
   app:
     build:
@@ -20,8 +20,8 @@ services:
       DB_HOST: database
       DB_NAME: drupal
       DB_USER: drupal
-      DB_PASSWORD: ${DB_PASSWORD:?run devopsy deploy once to generate it}
-      DRUPAL_HASH_SALT: ${DRUPAL_HASH_SALT:?run devopsy deploy once to generate it}
+      DB_PASSWORD: ${DB_PASSWORD:?run devopsy secrets to generate it}
+      DRUPAL_HASH_SALT: ${DRUPAL_HASH_SALT:?run devopsy secrets to generate it}
       # drush's URL (links, drush uli), from capabilities/env/compute.
       DRUSH_OPTIONS_URI: ${DRUSH_OPTIONS_URI:-${SITE_URL:-}}
     volumes:
@@ -66,7 +66,7 @@ services:
     environment:
       MARIADB_DATABASE: drupal
       MARIADB_USER: drupal
-      MARIADB_PASSWORD: ${DB_PASSWORD:?run devopsy deploy once to generate it}
+      MARIADB_PASSWORD: ${DB_PASSWORD:?run devopsy secrets to generate it}
       MARIADB_RANDOM_ROOT_PASSWORD: "1"
     command: --max-allowed-packet=64M --transaction-isolation=READ-COMMITTED
     volumes:
