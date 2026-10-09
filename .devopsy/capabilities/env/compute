@@ -1,0 +1,44 @@
+#!/bin/sh
+# The env capability (devopsy-cli's README, "Capabilities"): devopsy runs it
+# before every command and sets what it prints, unless already set. This
+# site's hosts, from its compose project name (COMPOSE_PROJECT_NAME, always
+# set by devopsy), the wildcard domain imported from the server's proxy
+# (compose.yaml's devopsy.import label) and the environment's
+# DEVOPSY_DOMAINS (space or comma separated):
+#   SITE_HOSTS      every host, the custom domains first
+#   SITE_HOST       the first: the custom domain, else the wildcard host
+#   SITE_URL        https://$SITE_HOST
+#   SITE_HOST_RULE  a Traefik rule for them, for the router's labels
+# Locally, without a wildcard domain, the wildcard host is
+# <name>.localhost; in a release without one (DEVOPSY_TARGET is set) there
+# is none, and a release without DEVOPSY_DOMAINS has no host at all.
+set -euf
+name=${COMPOSE_PROJECT_NAME:?}
+wildcard=
+if [ -n "${DEVOPSY_WILDCARD_DOMAIN:-}" ]; then
+  wildcard=$name.$DEVOPSY_WILDCARD_DOMAIN
+elif [ -z "${DEVOPSY_TARGET:-}" ]; then
+  wildcard=$name.localhost
+fi
+hosts=
+for h in $(printf '%s %s' "${DEVOPSY_DOMAINS:-}" "$wildcard" | tr ',A-Z' ' a-z'); do
+  case $h in
+    *[!a-z0-9.*-]* | .* | *. | *..*)
+      echo "DEVOPSY_DOMAINS: $h is not a hostname" >&2
+      exit 1
+      ;;
+  esac
+  case " $hosts " in
+    *" $h "*) ;;
+    *) hosts=${hosts:+$hosts }$h ;;
+  esac
+done
+[ -n "$hosts" ] || exit 0
+rule=
+for h in $hosts; do
+  rule="${rule:+$rule || }Host(\`$h\`)"
+done
+echo "SITE_HOSTS='$hosts'"
+echo "SITE_HOST='${hosts%% *}'"
+echo "SITE_URL='https://${hosts%% *}'"
+echo "SITE_HOST_RULE='$rule'"

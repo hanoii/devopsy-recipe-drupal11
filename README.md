@@ -71,8 +71,9 @@ configuration, only database updates until then.
   `devopsy.shell.user=app`). `devopsy --shell app --user root` for root,
   `devopsy --shell database` for another service.
 - **Settings** (`web/sites/default/settings.php`) come from the environment
-  set in `compose.yaml`: database, hash salt, trusted hosts (the wildcard URL
-  plus `DEVOPSY_DOMAINS`), and Traefik as the reverse proxy for client IPs
+  set in `compose.yaml`: database, hash salt, trusted hosts (`SITE_HOSTS`: the
+  wildcard URL plus `DEVOPSY_DOMAINS`, computed by
+  `.devopsy/capabilities/env/compute`), and Traefik as the reverse proxy for client IPs
   and HTTPS.
 - **Code changes need a release.** OPcache never revalidates (the code cannot
   change), and modules are added with composer, then released.
@@ -96,7 +97,7 @@ there, which builds it again (from cache). Database updates are not undone.
 ## Locally
 
 With a local devopsy-template-traefik, the site is at
-`https://devopsy-template-drupal11.localhost`:
+`https://drupal11.localhost` (the config's project name):
 
 ```sh
 devopsy deploy

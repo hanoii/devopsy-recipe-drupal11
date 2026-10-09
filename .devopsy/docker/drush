@@ -1,15 +1,5 @@
 #!/bin/sh
 # drush wrapper: goes through the entrypoint so it always runs as the app
-# user, even from `docker compose exec`, which runs as root.
-#
-# drush's URL (links, `drush uli`) is the environment's own: the first of
-# DEVOPSY_DOMAINS, else its wildcard host. DRUSH_OPTIONS_URI, when set, wins.
-if [ -z "${DRUSH_OPTIONS_URI:-}" ]; then
-  host=$(printf '%s' "${DEVOPSY_DOMAINS:-}" | tr ',' ' ' | awk '{ print $1 }')
-  host=${host:-${DEVOPSY_WILDCARD_HOST:-}}
-  if [ -n "$host" ]; then
-    DRUSH_OPTIONS_URI="https://$host"
-    export DRUSH_OPTIONS_URI
-  fi
-fi
+# user, even from `docker compose exec`, which runs as root. Its URL is
+# DRUSH_OPTIONS_URI, the environment's (compose.yaml).
 exec entrypoint /app/vendor/bin/drush --root=/app/web "$@"
